@@ -14,6 +14,7 @@ package io.jenkins.plugins.LogFlowVisualizer.input;
 
 import hudson.Extension;
 import hudson.util.FormValidation;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
@@ -66,7 +67,7 @@ public class LogFlowInputAdvanced extends LogFlowInput {
     }
 
 
-    @Extension
+    @Extension @Symbol("advancedInput")
     public static final class DescriptorImpl extends LogFlowInputDescriptor {
         @SuppressWarnings("lgtm[jenkins/no-permission-check]")
         @POST

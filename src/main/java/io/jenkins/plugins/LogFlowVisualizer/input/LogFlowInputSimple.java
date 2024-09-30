@@ -16,6 +16,7 @@ import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
@@ -53,7 +54,7 @@ public class LogFlowInputSimple extends LogFlowInput {
     }
 
 
-    @Extension
+    @Extension @Symbol("simpleInput")
     public static final class DescriptorImpl extends LogFlowInputDescriptor {
 
         @SuppressWarnings("lgtm[jenkins/no-permission-check]")
