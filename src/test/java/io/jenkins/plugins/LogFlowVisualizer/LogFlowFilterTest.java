@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class LogFlowFilterTest {
 
     @Test
-    void filter_withSimpleConfig_shouldSuccessfullyReturnLines(){
+    void filter_withSimpleConfig_shouldSuccessfullyReturnLines() {
         List<LineWithOffset> lines = new ArrayList<>();
 
         lines.add(new LineWithOffset("Starting logs", 0));
@@ -44,10 +45,46 @@ class LogFlowFilterTest {
                 .filter(LineOutput::getDisplay)
                 .collect(Collectors.toList());
 
-        assertEquals(2, toDisplayResult.size());
-        assertEquals("Result: SUCCESS\nResult: FAILURE", toDisplayResult.stream()
+
+        // expected
+        List<String> expectedLines = new ArrayList<>();
+        expectedLines.add("Result: SUCCESS");
+        expectedLines.add("Result: FAILURE");
+
+        String lineSeparator = System.lineSeparator();
+
+        assertEquals(String.join(lineSeparator, expectedLines), toDisplayResult.stream()
                 .map(LineOutput::getLine)
-                .collect(Collectors.joining("\n")));
+                .collect(Collectors.joining(lineSeparator)));
+    }
+
+    @Test
+    void filter_withSimpleConfig_shouldReturnNoLines() {
+        List<LineWithOffset> lines = new ArrayList<>();
+
+        lines.add(new LineWithOffset("Starting logs", 0));
+        lines.add(new LineWithOffset("Building", 1));
+        lines.add(new LineWithOffset("Testing", 2));
+        lines.add(new LineWithOffset("Deploying", 3));
+        lines.add(new LineWithOffset("Finished", 4));
+        lines.add(new LineWithOffset("Result: SUCCESS", 5));
+
+        LogFlowInput simpleConfig = new LogFlowInputSimple("Nonexistent pattern", false);
+
+        List<LogFlowInput> configs = new ArrayList<>();
+        configs.add(simpleConfig);
+
+        List<LineOutput> result = LogFlowFilter.filter(lines, configs);
+
+        List<LineOutput> toDisplayResult = result.stream()
+                .filter(LineOutput::getDisplay)
+                .collect(Collectors.toList());
+
+        List<String> expectedLines = new ArrayList<>();
+        String lineSeparator = System.lineSeparator();
+        assertEquals(String.join(lineSeparator, expectedLines), toDisplayResult.stream()
+                .map(LineOutput::getLine)
+                .collect(Collectors.joining(lineSeparator)));
     }
 
     @Test
@@ -85,10 +122,20 @@ class LogFlowFilterTest {
                 .filter(LineOutput::getDisplay)
                 .collect(Collectors.toList());
 
-        assertEquals(4, toDisplayResult.size());
-        assertEquals("NOW YOU SEE ME", toDisplayResult.stream()
+
+        //  expected
+        List<String> expectedLines = new ArrayList<>();
+        expectedLines.add("NOW");
+        expectedLines.add("YOU");
+        expectedLines.add("SEE");
+        expectedLines.add("ME");
+
+        String lineSeparator = System.lineSeparator();
+        assertEquals(String.join(lineSeparator, expectedLines), toDisplayResult.stream()
                 .map(LineOutput::getLine)
-                .collect(Collectors.joining(" ")));
+                .collect(Collectors.joining(lineSeparator)));
 
     }
+
+
 }
