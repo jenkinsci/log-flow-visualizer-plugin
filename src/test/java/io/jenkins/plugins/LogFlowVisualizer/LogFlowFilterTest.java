@@ -2,6 +2,7 @@ package io.jenkins.plugins.LogFlowVisualizer;
 
 import io.jenkins.plugins.LogFlowVisualizer.input.LogFlowInput;
 import io.jenkins.plugins.LogFlowVisualizer.input.LogFlowInputAdvanced;
+import io.jenkins.plugins.LogFlowVisualizer.input.LogFlowInputSimple;
 import io.jenkins.plugins.LogFlowVisualizer.model.LineOutput;
 import io.jenkins.plugins.LogFlowVisualizer.model.LineWithOffset;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,42 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 class LogFlowFilterTest {
+
+    @Test
+    void filter_withSimpleConfig_shouldSuccessfullyReturnLines(){
+        List<LineWithOffset> lines = new ArrayList<>();
+
+        lines.add(new LineWithOffset("Starting logs", 0));
+        lines.add(new LineWithOffset("Building", 1));
+        lines.add(new LineWithOffset("Testing", 2));
+        lines.add(new LineWithOffset("Deploying", 3));
+        lines.add(new LineWithOffset("Finished", 4));
+        lines.add(new LineWithOffset("Result: SUCCESS", 5));
+
+
+        lines.add(new LineWithOffset("Starting logs", 0));
+        lines.add(new LineWithOffset("Building", 1));
+        lines.add(new LineWithOffset("Testing", 2));
+        lines.add(new LineWithOffset("Deploying", 3));
+        lines.add(new LineWithOffset("Finished", 4));
+        lines.add(new LineWithOffset("Result: FAILURE", 5));
+
+        LogFlowInput simpleConfig = new LogFlowInputSimple("Result: .*", false);
+
+        List<LogFlowInput> configs = new ArrayList<>();
+        configs.add(simpleConfig);
+
+        List<LineOutput> result = LogFlowFilter.filter(lines, configs);
+
+        List<LineOutput> toDisplayResult = result.stream()
+                .filter(LineOutput::getDisplay)
+                .collect(Collectors.toList());
+
+        assertEquals(2, toDisplayResult.size());
+        assertEquals("Result: SUCCESS\nResult: FAILURE", toDisplayResult.stream()
+                .map(LineOutput::getLine)
+                .collect(Collectors.joining("\n")));
+    }
 
     @Test
     void filter_withAdvancedConfig_shouldSuccessfullyReturnLines() {
