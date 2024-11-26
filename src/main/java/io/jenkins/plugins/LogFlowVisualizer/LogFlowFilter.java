@@ -40,7 +40,7 @@ public class LogFlowFilter {
         int activeRegexCount = 0;
 
         //advanced setup
-        boolean advancedRegexLock = false;
+        boolean advancedRegexIsActive = false;
         LogFlowInputAdvanced activeConfig = null;
 
 
@@ -50,7 +50,7 @@ public class LogFlowFilter {
             String line = lineWithOffset.getLine();
 
             //check if advanced regex is currently active
-            if (advancedRegexLock) {
+            if (advancedRegexIsActive) {
                 if (line.matches(activeConfig.getEndMark())) {
                     //end mark found
                     boolean display = activeConfig.getNumberOfLineToDisplay() == activeRegexCount + 1; // line 0 is start mark
@@ -61,32 +61,37 @@ public class LogFlowFilter {
                         result.add(new LineOutput(activeConfig.getEndMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.END_MARK, lineWithOffset.getOffset(), display));
                     }
 
-                    advancedRegexLock = false;
+                    advancedRegexIsActive = false;
 
-                    activeRegexCount = 0;
+                    activeRegexCount = 0; // reset count to zero for the next iteration and continue
                     activeConfig = null;
+                    lineIndex++;
+                    continue;
                 } else {
                     // filling content of an advanced regex
 
                     boolean display = activeConfig.getNumberOfLineToDisplay() == activeRegexCount + 1; // line 0 is start mark
                     if (activeRegexCount >= activeConfig.getMaxContentLength()) {
-                        //end regex because of reaching the max limit
+                        // end regex because of reaching the max limit
                         result.add(new LineOutput(activeConfig.getStartMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.LIMIT_REACHED_LINE, lineWithOffset.getOffset(), display));
 
 
-                        advancedRegexLock = false;
-
-                        activeConfig = null;
+                        advancedRegexIsActive = false;
 
                         activeRegexCount = 0;
+                        activeConfig = null;
+                        lineIndex++;
+                        continue;
                     } else {
+                        // adding a "content" line to the regex found, regex is still active after this addition
                         result.add(new LineOutput(activeConfig.getStartMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.CONTENT_LINE, lineWithOffset.getOffset(), display));
+                        activeRegexCount++;
+                        lineIndex++;
+                        continue; //skipping to next line
                     }
 
                 }
-                activeRegexCount++;
-                lineIndex++;
-                continue; //skipping to next line
+
             }
 
             //matching first config, first come, first served principal
@@ -134,7 +139,7 @@ public class LogFlowFilter {
                             result.add(new LineOutput(advancedConfig.getStartMark(), line, lineIndex, advancedConfig.getDeleteMark(), LineType.START_MARK, lineWithOffset.getOffset(), display));
                         }
                         activeConfig = advancedConfig;
-                        advancedRegexLock = true;
+                        advancedRegexIsActive = true;
                         break;
                     }
 
