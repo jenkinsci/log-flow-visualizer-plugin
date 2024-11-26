@@ -63,8 +63,10 @@ public class LogFlowFilter {
 
                     advancedRegexLock = false;
 
-                    activeRegexCount = 0;
+                    activeRegexCount = 0; // reset count to zero for the next iteration and continue
                     activeConfig = null;
+                    lineIndex++;
+                    continue;
                 } else {
                     // filling content of an advanced regex
 
@@ -79,6 +81,8 @@ public class LogFlowFilter {
                         activeConfig = null;
 
                         activeRegexCount = 0;
+                        lineIndex++;
+                        continue;
                     } else {
                         result.add(new LineOutput(activeConfig.getStartMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.CONTENT_LINE, lineWithOffset.getOffset(), display));
                     }
