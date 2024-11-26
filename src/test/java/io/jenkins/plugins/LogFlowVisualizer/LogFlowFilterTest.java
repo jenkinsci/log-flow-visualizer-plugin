@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+// the following are unit tests for filter function.
+// NOTE: The offsets in these tests don't reflect real scenario and are just random sequential numbers, as we don't use them here
 class LogFlowFilterTest {
 
     @Test
