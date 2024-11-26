@@ -72,25 +72,26 @@ public class LogFlowFilter {
 
                     boolean display = activeConfig.getNumberOfLineToDisplay() == activeRegexCount + 1; // line 0 is start mark
                     if (activeRegexCount >= activeConfig.getMaxContentLength()) {
-                        //end regex because of reaching the max limit
+                        // end regex because of reaching the max limit
                         result.add(new LineOutput(activeConfig.getStartMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.LIMIT_REACHED_LINE, lineWithOffset.getOffset(), display));
 
 
                         advancedRegexIsActive = false;
 
-                        activeConfig = null;
-
                         activeRegexCount = 0;
+                        activeConfig = null;
                         lineIndex++;
                         continue;
                     } else {
+                        // adding a "content" line to the regex found, regex is still active after this addition
                         result.add(new LineOutput(activeConfig.getStartMark(), line, lineIndex, activeConfig.getDeleteMark(), LineType.CONTENT_LINE, lineWithOffset.getOffset(), display));
+                        activeRegexCount++;
+                        lineIndex++;
+                        continue; //skipping to next line
                     }
 
                 }
-                activeRegexCount++;
-                lineIndex++;
-                continue; //skipping to next line
+
             }
 
             //matching first config, first come, first served principal
