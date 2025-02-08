@@ -33,11 +33,12 @@
     <properties>
         <revision>1.2</revision>
         <changelist>-SNAPSHOT</changelist>
-
-        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>    </properties>
+        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+
+        <maven-hpi-plugin.version>3.42</maven-hpi-plugin.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -50,6 +51,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.github.java-diff-utils</groupId>
@@ -61,6 +63,25 @@
             <artifactId>jackson2-api</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <version>${maven-hpi-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <repositories>
         <repository>
