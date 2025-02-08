@@ -17,8 +17,8 @@ import hudson.model.Action;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.WebMethod;
 import org.kohsuke.stapler.verb.GET;
 
@@ -41,7 +41,7 @@ public class LogFlowOffsetAction implements SimpleBuildStep.LastBuildAction {
 
     @GET
     @WebMethod(name = "get-search-offset")
-    public void doSearchOffset(StaplerRequest req, StaplerResponse res) throws IOException {
+    public void doSearchOffset(StaplerRequest2 req, StaplerResponse2 res) throws IOException {
         Jenkins.get().checkPermission(Jenkins.READ);
         res.setContentType("text/plain");
         res.setCharacterEncoding("UTF-8");
